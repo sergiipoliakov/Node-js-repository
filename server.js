@@ -1,6 +1,7 @@
 const http = require("http");
 const fs = require("fs").promises;
 const url = require("url");
+const path = require("path");
 
 const TypeMime = {
 	".html": "text/html",
@@ -9,7 +10,7 @@ const TypeMime = {
 	".css": "text/css",
 	".png": "image/png",
 	".jpg": "image/jpeg",
-	".ico": "",
+	".ico": "image/x-icon",
 };
 
 http
@@ -19,14 +20,21 @@ http
 		console.log(req.url);
 		let filename = pathname.substring(1);
 		switch (pathname) {
-			case "./":
+			case "/":
 				filename = "index.html";
+				break;
+			case "/contact":
+				filename = "contact.html";
+				break;
+			case "/blog":
+				filename = "blog.html";
 				break;
 			default:
 				break;
 		}
-		const content = await fstat.readFile("index/html");
-		res.writeHead(200, { "Content-type": "text/html" });
+		const content = await fs.readFile(filename);
+		const contentType = TypeMime[path.extname(filename)];
+		res.writeHead(200, { "Content-type": contentType });
 		res.write(content);
 		res.end();
 	})
