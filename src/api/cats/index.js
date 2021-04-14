@@ -1,13 +1,22 @@
 const express = require("express");
-
+const controllerCats = require("../../controllers/cats");
 const router = express.Router();
+const {
+	validateCreateCat,
+	validateUpdateCat,
+	validateUpdateStatusCat,
+} = require("../../validation/cats");
 
 router
-	.get("/", controlerCats.getAll)
-	.get("/:id", controlerCats.getbyId)
-	.post("/", controlerCats.create)
-	.put("/:id", controlerCats.update)
-	.get("/:id/vaccinated", controlerCats.updateStatus)
-	.delete("/:id", controlerCats.romove);
+	.get("/", controllerCats.getAll)
+	.get("/:id", controllerCats.getById)
+	.post("/", validateCreateCat, controllerCats.create)
+	.put("/:id", validateUpdateCat, controllerCats.update)
+	.patch(
+		"/:id/vaccinated",
+		validateUpdateStatusCat,
+		controllerCats.updateStatus
+	)
+	.delete("/:id", controllerCats.remove);
 
 module.exports = router;

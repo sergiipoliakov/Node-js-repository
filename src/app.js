@@ -3,7 +3,7 @@ const cors = require("cors");
 const app = express();
 
 const { HttpCode } = require("./helpers/constants");
-const routerCats = require("./api/cats/index");
+const routerCats = require("./api/cats");
 
 app.use(cors());
 app.use(express.json());
@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 	res.status(HttpCode.NOT_FOUND).json({
 		status: "error",
 		code: HttpCode.NOT_FOUND,
-		message: `Use api on roues ${res.baseUrl}/api/cats`,
+		message: `Use api on routes ${req.baseUrl}/api/cats`,
 		data: "Not Found",
 	});
 });
@@ -29,8 +29,8 @@ app.use((err, req, res, next) => {
 	});
 });
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running. Use Our API on port: ${PORT}`)
-})
+	console.log(`Server running. Use Our API on port: ${PORT}`);
+});
