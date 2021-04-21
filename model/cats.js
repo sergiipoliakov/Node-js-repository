@@ -1,35 +1,57 @@
-const { v4: uuidv4 } = require('uuid');
 const db = require('./db');
+const { ObjectId } = require('mongodb');
 
+const getCollection = async (db, name) => {
+  const client = await db;
+  const collection = await client.db().collection(name);
+  return collection;
+};
 
 const getAll = async () => {
-  return db.get('cats').value();
+  const collection = await getCollection(db, 'cats');
+  const resolts = await collection.find().toArray();
+  return resolts;
 };
 
 const getById = async id => {
-  return db.get('cats').find({ id }).value();
+  const collection = await getCollection(db, 'cats');
+  const objectId = new ObjectId(id);
+  console.log(objectId.getTimestamp());
+  const [resolt] = await collection.find({ _id: objectId }).toArray();
+
+  return resolt;
 };
 
 const remove = async id => {
-  const [record] = db.get('cats').remove({ id }).write();
-  return record;
+  const collection = await getCollection(db, 'cats');
+  const objectId = new ObjectId(id);
+  const { value: result } = await collection.findAndRemove({ _id: objectId });
+  return result;
 };
 
 const create = async body => {
-  const id = uuidv4();
   const record = {
-    id,
     ...body,
     ...(body.isVaccinated ? {} : { isVaccinated: false }),
   };
-  db.get('cats').push(record).write();
-  return record;
+  const collection = await getCollection(db, 'cats');
+
+  const {
+    ops: [resolt],
+  } = await collection.insertOne(record);
+  return resolt;
 };
 
 const update = async (id, body) => {
-  const record = await db.get('cats').find({ id }).assign(body).value();
-  db.write();
-  return record.id ? record : null;
+  const collection = await getCollection(db, 'cats');
+  const objectId = new ObjectId(id);
+  const { value: result } = await collection.findOneAndUpdate(
+    { _id: objectId },
+    { $set: body },
+    { returnOriginal: false },
+  );
+
+  return result;
 };
 
 module.exports = {

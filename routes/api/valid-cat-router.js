@@ -3,7 +3,7 @@ const Joi = require('joi');
 const schemaCreateCat = Joi.object({
   name: Joi.string().min(3).max(30).required(),
 
-  age: Joi.number().integer().min(1900).max(2013).required(),
+  age: Joi.number().integer().min(1).max(99).required(),
 
   isVaccinated: Joi.boolean().optional(),
 });
@@ -11,7 +11,7 @@ const schemaCreateCat = Joi.object({
 const schemaUpdateCat = Joi.object({
   name: Joi.string().min(3).max(30).optional(),
 
-  age: Joi.number().integer().min(1900).max(2013).optional(),
+  age: Joi.number().integer().min(1).max(99).optional(),
 
   isVaccinated: Joi.boolean().optional(),
 }).or('name', 'age', 'isVaccinated');
