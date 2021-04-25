@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const mongoose = require('mongoose');
 
 const schemaCreateCat = Joi.object({
   name: Joi.string().min(3).max(30).required(),
@@ -39,5 +40,11 @@ module.exports = {
   },
   validationUpdateStatusCat: (req, res, next) => {
     return validate(schemaUpdateStatusCat, req.body, next);
+  },
+  validationObjectId: (req, res, next) => {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return next({ status: 400, message: 'Invalid Object Id ' });
+    }
+    next();
   },
 };

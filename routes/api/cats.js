@@ -5,8 +5,10 @@ const Cats = require('../../model/cats');
 const {
   validationCreateCat,
   validationUpdateCat,
+  validationObjectId,
   validationUpdateStatusCat,
 } = require('./valid-cat-router');
+const handleError = require('../../helper/handle-error');
 
 router.get('/', async (req, res, next) => {
   try {
@@ -23,7 +25,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', validationObjectId, async (req, res, next) => {
   try {
     const cat = await Cats.getById(req.params.id);
     if (cat) {
@@ -46,22 +48,26 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', validationCreateCat, async (req, res, next) => {
-  try {
-    const cat = await Cats.create(req.body);
-    return res.status(201).json({
-      status: 'success',
-      code: 201,
-      data: {
-        cat,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+router.post(
+  '/',
+  validationCreateCat,
+  handleError(async (req, res, next) => {
+    try {
+      const cat = await Cats.create(req.body);
+      return res.status(201).json({
+        status: 'success',
+        code: 201,
+        data: {
+          cat,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }),
+);
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', validationObjectId, async (req, res, next) => {
   try {
     const cat = await Cats.remove(req.params.id);
     if (cat) {
