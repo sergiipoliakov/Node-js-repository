@@ -2,7 +2,8 @@ const Cats = require('../model/cats');
 
 const getAll = async (req, res, next) => {
   try {
-    const cats = await Cats.getAll();
+    const userId = req.user?.id;
+    const cats = await Cats.getAll(userId, req.query);
     return res.json({
       status: 'success',
       code: 200,
@@ -17,7 +18,8 @@ const getAll = async (req, res, next) => {
 
 const getById = async (req, res, next) => {
   try {
-    const cat = await Cats.getById(req.params.id);
+    const userId = req.user?.id;
+    const cat = await Cats.getById(userId, req.params.id);
     if (cat) {
       return res.status(201).json({
         status: 'success',
@@ -40,7 +42,8 @@ const getById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const cat = await Cats.create(req.body);
+    const userId = req.user?.id;
+    const cat = await Cats.create(userId, req.body);
     return res.status(201).json({
       status: 'success',
       code: 201,
@@ -55,7 +58,8 @@ const create = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    const cat = await Cats.remove(req.params.id);
+    const userId = req.user?.id;
+    const cat = await Cats.remove(userId, req.params.id);
     if (cat) {
       return res.status(201).json({
         status: 'success',
@@ -78,7 +82,8 @@ const remove = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const cat = await Cats.update(req.params.id, req.body);
+    const userId = req.user?.id;
+    const cat = await Cats.update(userId, req.params.id, req.body);
     if (cat) {
       return res.status(201).json({
         status: 'success',
@@ -101,7 +106,8 @@ const update = async (req, res, next) => {
 
 const updateStatus = async (req, res, next) => {
   try {
-    const cat = await Cats.update(req.params.id, req.body);
+    const userId = req.user?.id;
+    const cat = await Cats.update(userId, req.params.id, req.body);
     if (cat) {
       return res.status(201).json({
         status: 'success',
@@ -122,6 +128,26 @@ const updateStatus = async (req, res, next) => {
   }
 };
 
+const onlyMan = async (req, res, next) => {
+  return res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      message: 'only Man',
+    },
+  });
+};
+
+const onlyFemale = async (req, res, next) => {
+  return res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      message: 'Only Woman',
+    },
+  });
+};
+
 module.exports = {
   getAll,
   getById,
@@ -129,4 +155,6 @@ module.exports = {
   update,
   remove,
   updateStatus,
+  onlyMan,
+  onlyFemale,
 };
