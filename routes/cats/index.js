@@ -1,5 +1,4 @@
 const express = require('express');
-// const { required } = require('joi');
 const router = express.Router();
 const ctrl = require('../../controllers/cats');
 const {
@@ -8,13 +7,17 @@ const {
   validationObjectId,
   validationUpdateStatusCat,
 } = require('./valid-cat-router');
+const guard = require('../../helper/guard');
 
-router.get('/', ctrl.getAll).post('/', validationCreateCat, ctrl.create);
 
 router
-  .get('/:id', validationObjectId, ctrl.getById)
-  .put('/:id', validationUpdateCat, ctrl.update)
-  .patch('/:id/vaccinated', validationUpdateStatusCat, ctrl.updateStatus)
-  .delete('/:id', validationObjectId, ctrl.remove);
+  .get('/', guard, ctrl.getAll)
+  .post('/', guard, validationCreateCat, ctrl.create);
+
+router
+  .get('/:id', guard, validationObjectId, ctrl.getById)
+  .put('/:id', guard, validationUpdateCat, ctrl.update)
+  .patch('/:id/vaccinated', guard, validationUpdateStatusCat, ctrl.updateStatus)
+  .delete('/:id', guard, ctrl.remove);
 
 module.exports = router;

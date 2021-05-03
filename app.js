@@ -3,6 +3,7 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const catsRouter = require('./routes/cats');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(
 );
 app.use(express.json());
 
+app.use('/api/users', usersRouter);
 app.use('/api/cats', catsRouter);
 
 app.use((req, res) => {

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+const { Schema, model, SchemaTypes } = mongoose;
 
 const catSchema = new Schema(
   {
@@ -22,8 +22,8 @@ const catSchema = new Schema(
       get: data => data.sort(),
     },
     owner: {
-      name: String,
-      age: Number,
+      type: SchemaTypes.ObjectId,
+      ref: 'user',
     },
   },
   {
