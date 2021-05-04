@@ -3,10 +3,10 @@ const { HttpCode } = require('../helper/constants');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-const User = require('../model/schemas/user');
+
 
 const reg = async (req, res, next) => {
-  const { name, email, password, gender } = req.body;
+  const {  email  } = req.body;
   const user = await Users.findByEmail(email);
   if (user) {
     return res.status(HttpCode.CONFLICT).json({
