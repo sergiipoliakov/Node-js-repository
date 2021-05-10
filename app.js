@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const boolParser = require('express-query-boolean');
 const rateLimit = require('express-rate-limit');
+
 const catsRouter = require('./routes/cats');
 const usersRouter = require('./routes/users');
 
@@ -13,9 +14,7 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(helmet());
 app.get('env') !== 'test' && app.use(logger(formatsLogger));
-
 app.use(express.static('public'));
-
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
@@ -23,7 +22,7 @@ const limiter = rateLimit({
     return res.status(429).json({
       status: 'error',
       code: 429,
-      message: 'Too Many Request',
+      message: 'Too Many Requests',
     });
   },
 });
@@ -32,12 +31,12 @@ app.use(limiter);
 app.use(
   cors({
     origin: '*',
-    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE ',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     preflightContinue: false,
     optionsSuccessStatus: 204,
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: 100000 }));
 app.use(boolParser());
 
 app.use('/api/users', usersRouter);

@@ -21,11 +21,11 @@ const remove = jest.fn((userId, id) => {
 
 const create = jest.fn((userId, body) => {
   cats.push({ ...body, _id: '5f8382425ba83a4f1829ca5d' });
-  return cats;
+  return { ...body, _id: '5f8382425ba83a4f1829ca5d' };
 });
 
 const update = jest.fn((userId, id, body) => {
-  const [cat] = cats.filter(el => String(el._id) === String(id));
+  let [cat] = cats.filter(el => String(el._id) === String(id));
   if (cat) {
     cat = { ...cat, ...body };
   }

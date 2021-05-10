@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 
 const schemaCreateCat = Joi.object({
   name: Joi.string().min(3).max(30).required(),
-
-  age: Joi.number().integer().min(1).max(99).required(),
-
+  age: Joi.number().integer().min(1).max(40).required(),
   isVaccinated: Joi.boolean().optional(),
 });
 
@@ -20,9 +18,7 @@ const schemaQueryCat = Joi.object({
 
 const schemaUpdateCat = Joi.object({
   name: Joi.string().min(3).max(30).optional(),
-
-  age: Joi.number().integer().min(1).max(99).optional(),
-
+  age: Joi.number().integer().min(1).max(40).optional(),
   isVaccinated: Joi.boolean().optional(),
 }).or('name', 'age', 'isVaccinated');
 
@@ -35,7 +31,6 @@ const validate = async (schema, obj, next) => {
     await schema.validateAsync(obj);
     return next();
   } catch (err) {
-    console.log(err);
     next({ status: 400, message: err.message.replace(/"/g, "'") });
   }
 };
@@ -53,9 +48,9 @@ module.exports = {
   validationUpdateStatusCat: async (req, res, next) => {
     return await validate(schemaUpdateStatusCat, req.body, next);
   },
-  validationObjectId: (req, res, next) => {
+  validationObjectId: async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return next({ status: 400, message: 'Invalid Object Id ' });
+      return next({ status: 400, message: 'Invalid Object Id' });
     }
     next();
   },

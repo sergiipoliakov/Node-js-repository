@@ -1,12 +1,12 @@
-const Users = require('../model/users');
-const { HttpCode } = require('../helper/constants');
 const jwt = require('jsonwebtoken');
 const jimp = require('jimp');
 const fs = require('fs/promises');
-const { promisify } = require('util');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
+const { promisify } = require('util');
 require('dotenv').config();
+const Users = require('../model/users');
+const { HttpCode } = require('../helper/constants');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 cloudinary.config({
@@ -23,7 +23,7 @@ const reg = async (req, res, next) => {
     return res.status(HttpCode.CONFLICT).json({
       status: 'error',
       code: HttpCode.CONFLICT,
-      message: 'Email is ready use',
+      message: 'Email is already use',
     });
   }
   try {
@@ -35,13 +35,14 @@ const reg = async (req, res, next) => {
         id: newUser.id,
         email: newUser.email,
         gender: newUser.gender,
-        avatat: newUser.avatar,
+        avatar: newUser.avatar,
       },
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
+
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await Users.findByEmail(email);
@@ -62,6 +63,7 @@ const login = async (req, res, next) => {
     data: { token },
   });
 };
+
 const logout = async (req, res, next) => {
   const id = req.user.id;
   await Users.updateToken(id, null);
@@ -70,12 +72,10 @@ const logout = async (req, res, next) => {
 
 const updateAvatar = async (req, res, next) => {
   const { id } = req.user;
-  const avatarUrl = await saveAvatarUser(req);
-  await Users.updateAvatar(id, avatarUrl);
-
-  // const { idCloudAvatar, avatarUrl} = await saveAvatarUserToCloud(req);
-
-  // await Users.updateAvatar(id, avatarUrl, idCloudAvatar );
+  // const avatarUrl = await saveAvatarUser(req)
+  // await Users.updateAvatar(id, avatarUrl)
+  const { idCloudAvatar, avatarUrl } = await saveAvatarUserToCloud(req);
+  await Users.updateAvatar(id, avatarUrl, idCloudAvatar);
   return res
     .status(HttpCode.OK)
     .json({ status: 'success', code: HttpCode.OK, data: { avatarUrl } });
@@ -91,7 +91,6 @@ const saveAvatarUser = async req => {
     .autocrop()
     .cover(250, 250, jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE)
     .writeAsync(pathFile);
-
   try {
     await fs.rename(
       pathFile,

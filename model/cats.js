@@ -13,38 +13,39 @@ const getAll = async (userId, query) => {
   if (isVaccinated !== null) {
     optionsSearch.isVaccinated = isVaccinated;
   }
-  const resolts = await Cats.paginate(optionsSearch, {
+  const results = await Cats.paginate(optionsSearch, {
     limit,
     offset,
     sort: {
-      ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
-      ...(sortBy ? { [`${sortByDesc}`]: -1 } : {}),
+      ...(sortBy ? { [`${sortBy}`]: 1 } : {}), // name: 1
+      ...(sortByDesc ? { [`${sortByDesc}`]: -1 } : {}),
     },
-    select: filter ? filter.split(' ').join(' ') : '',
+    select: filter ? filter.split('|').join(' ') : '',
     populate: {
       path: 'owner',
-      select: 'name email gender',
+      select: 'name email gender -_id',
     },
   });
-  return resolts;
+  const { docs: cats, totalDocs: total } = results;
+  return { cats, total, limit, offset };
 };
 
 const getById = async (userId, id) => {
-  const resolt = await Cats.findOne({ _id: id, owner: userId }).populate({
+  const result = await Cats.findOne({ _id: id, owner: userId }).populate({
     path: 'owner',
-    select: 'name email gender',
+    select: 'name email gender -_id',
   });
-  return resolt;
+  return result;
 };
 
 const remove = async (userId, id) => {
-  const resolt = await Cats.findByIdAndRemove({ _id: id, owner: userId });
-  return resolt;
+  const result = await Cats.findByIdAndRemove({ _id: id, owner: userId });
+  return result;
 };
 
 const create = async (userId, body) => {
-  const resolt = await Cats.create({ ...body, owner: userId });
-  return resolt;
+  const result = await Cats.create({ ...body, owner: userId });
+  return result;
 };
 
 const update = async (userId, id, body) => {
@@ -53,7 +54,6 @@ const update = async (userId, id, body) => {
     { ...body },
     { new: true },
   );
-
   return result;
 };
 

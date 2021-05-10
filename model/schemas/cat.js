@@ -6,7 +6,7 @@ const catSchema = new Schema(
   {
     name: {
       type: String,
-      require: [true, 'Set name for cat'],
+      required: [true, 'Set name for cat'],
     },
     age: {
       type: Number,
