@@ -1,95 +1,42 @@
-{
-    "status": "success",
-    "code": 200,
-    "data": {
-        "cats": {
-            "docs": [
-                {
-                    "isVaccinated": true,
-                    "features": [],
-                    "age": 3,
-                    "owner": {
-                        "name": "Guest",
-                        "gender": "none",
-                        "_id": "608f95c7ad0f6116fcb4e912",
-                        "email": "sergii2@mail.com"
-                    },
-                    "createdAt": "2021-05-03T06:24:09.266Z",
-                    "updatedAt": "2021-05-03T07:35:09.227Z",
-                    "nick": "Bodya",
-                    "id": "608f9709ad0f6116fcb4e913"
-                },
-                {
-                    "isVaccinated": false,
-                    "features": [],
-                    "age": 13,
-                    "owner": {
-                        "name": "Guest",
-                        "gender": "none",
-                        "_id": "608f95c7ad0f6116fcb4e912",
-                        "email": "sergii2@mail.com"
-                    },
-                    "createdAt": "2021-05-03T06:24:53.341Z",
-                    "updatedAt": "2021-05-03T06:24:53.341Z",
-                    "nick": "Simon",
-                    "id": "608f9735ad0f6116fcb4e914"
-                },
-                {
-                    "isVaccinated": false,
-                    "features": [],
-                    "age": 23,
-                    "owner": {
-                        "name": "Guest",
-                        "gender": "none",
-                        "_id": "608f95c7ad0f6116fcb4e912",
-                        "email": "sergii2@mail.com"
-                    },
-                    "createdAt": "2021-05-03T06:25:05.931Z",
-                    "updatedAt": "2021-05-03T06:25:05.931Z",
-                    "nick": "Liza",
-                    "id": "608f9741ad0f6116fcb4e915"
-                },
-                {
-                    "isVaccinated": false,
-                    "features": [],
-                    "age": 23,
-                    "owner": {
-                        "name": "Guest",
-                        "gender": "none",
-                        "_id": "608f95c7ad0f6116fcb4e912",
-                        "email": "sergii2@mail.com"
-                    },
-                    "createdAt": "2021-05-03T07:03:12.436Z",
-                    "updatedAt": "2021-05-03T07:03:12.436Z",
-                    "nick": "Liza4",
-                    "id": "608fa030b6566f1c70754476"
-                },
-                {
-                    "isVaccinated": false,
-                    "features": [],
-                    "age": 23,
-                    "owner": {
-                        "name": "Guest",
-                        "gender": "none",
-                        "_id": "608f95c7ad0f6116fcb4e912",
-                        "email": "sergii2@mail.com"
-                    },
-                    "createdAt": "2021-05-03T07:03:19.730Z",
-                    "updatedAt": "2021-05-03T07:03:19.730Z",
-                    "nick": "Liza1",
-                    "id": "608fa037b6566f1c70754477"
-                }
-            ],
-            "totalDocs": 7,
-            "offset": 0,
-            "limit": 5,
-            "totalPages": 2,
-            "page": 1,
-            "pagingCounter": 1,
-            "hasPrevPage": false,
-            "hasNextPage": true,
-            "prevPage": null,
-            "nextPage": 2
-        }
-    }
-}
+const cats = [
+  {
+    _id: '5f837f855ba83a4f1829ca5b',
+    name: 'Barsik',
+    age: 3.0,
+    isVaccinated: false,
+  },
+  {
+    _id: '5f8382425ba83a4f1829ca5c',
+    name: 'Lama',
+    age: 2.0,
+    isVaccinated: false,
+  },
+];
+
+const newCat = {
+  name: 'New',
+  age: 1.0,
+  isVaccinated: false,
+};
+
+const User = {
+  name: 'Guest',
+  gender: 'female',
+  token:
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwNDc4MGIwYTMzZjU5M2I1ODY2ZDcwZCIsImlhdCI6MTYxNTMzNDc0NCwiZXhwIjoxNjE1MzM4MzQ0fQ.ZOul5xw2qGjRiFVXE4eKyIcJJ3ubRsVcmlXSm-KzNzg',
+  idCloudAvatar: null,
+  _id: '604780b0a33f593b5866d70d',
+  id: '604780b0a33f593b5866d70d',
+  email: 'test007@ex.ua',
+  password: '$2a$08$ebkI0zFk0IBoStiDDhyzr.9y0BqToGXPtrcTqcMErEuk4JHHF3K8O',
+  updatedAt: '2021-03-10T00:05:44.937Z',
+  avatar:
+    'https://s.gravatar.com/avatar/d6ac26ce64657b23fce03f68f65dc6b4?s=250',
+};
+
+const users = [];
+users[0] = User;
+
+const newUser = { email: 'test@test.com', password: '123456' };
+
+module.exports = { cats, newCat, User, users, newUser };

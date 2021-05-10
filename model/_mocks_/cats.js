@@ -1,38 +1,36 @@
 const { cats } = require('./data');
 
-const getAll = async((userId, query) => {
+const getAll = jest.fn((userId, query) => {
   const { limit = 5, offset = 0 } = query;
   return { cats, total: cats.length, limit, offset };
 });
 
-const getById = async (userId, id) => {
+const getById = jest.fn((userId, id) => {
   const [cat] = cats.filter(el => String(el._id) === String(id));
   return cat;
-};
+});
 
-const remove = async (userId, id) => {
+const remove = jest.fn((userId, id) => {
   const index = cats.findIndex(el => String(el._id) === String(id));
   if (index === -1) {
     return null;
   }
   const [cat] = cats.splice(index, 1);
   return cat;
-};
+});
 
-const create = async (userId, body) => {
-  const resolt = await Cats.create({ ...body, owner: userId });
-  return resolt;
-};
+const create = jest.fn((userId, body) => {
+  cats.push({ ...body, _id: '5f8382425ba83a4f1829ca5d' });
+  return cats;
+});
 
-const update = async (userId, id, body) => {
-  const result = await Cats.findByIdAndUpdate(
-    { _id: id, owner: userId },
-    { ...body },
-    { new: true },
-  );
-
-  return result;
-};
+const update = jest.fn((userId, id, body) => {
+  const [cat] = cats.filter(el => String(el._id) === String(id));
+  if (cat) {
+    cat = { ...cat, ...body };
+  }
+  return cat;
+});
 
 module.exports = {
   getAll,

@@ -5,7 +5,7 @@ const { set } = require('../app');
 const { expectCt } = require('helmet');
 const { deleteOne } = require('../model/schemas/user');
 
-const { User, cats, newCat } = requre('../model/_mocks_/data.js');
+const { User, cats, newCat } = require('../model/_mocks_/data.js');
 require('dotenv').config();
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -18,13 +18,13 @@ jest.mock('../model/users.js');
 
 describe('Testing the route api/cats', () => {
   describe('should handle GET request', () => {
-    test('should return 200 status for GET', async () => {
+    test('should return 200 status for GET:/cats', async done => {
       const res = await request(app)
         .get('/api/cats')
         .set('Authorization', `Bearer ${token}`);
       expect(res.status).toEqual(200);
       expect(res.body).toBeDefined();
-      expect(res.body.data.cats).toBeInstance(array);
+      expect(res.body.data.cats).toBeInstanceOf(Array);
     });
     test('should return 200 status for GET', async done => {
       const cat = cats[0];

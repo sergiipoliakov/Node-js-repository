@@ -1,8 +1,8 @@
 const role = require('../helper/role');
 const { HttpCode, Gender } = require('../helper/constants');
-const { intToRGBA } = require('jimp');
+
 const { expect } = require('helmet');
-const { User } = requre('../model/_mocks_/data.js');
+const { User } = require('../model/_mocks_/data.js');
 
 describe('Unit test : helper/role', () => {
   const req = {
