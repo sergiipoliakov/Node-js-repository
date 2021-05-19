@@ -6,7 +6,9 @@ const cloudinary = require('cloudinary').v2;
 const { promisify } = require('util');
 require('dotenv').config();
 const Users = require('../model/users');
+const EmailService = require('../services/email');
 const { HttpCode } = require('../helper/constants');
+const User = require('../model/schemas/user');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 cloudinary.config({
@@ -17,8 +19,7 @@ cloudinary.config({
 const uploadToCloud = promisify(cloudinary.uploader.upload);
 
 const reg = async (req, res, next) => {
-  const { email } = req.body;
-  const user = await Users.findByEmail(email);
+  const user = await Users.findByEmail(req.body.email);
   if (user) {
     return res.status(HttpCode.CONFLICT).json({
       status: 'error',
@@ -28,14 +29,24 @@ const reg = async (req, res, next) => {
   }
   try {
     const newUser = await Users.create(req.body);
+    const { id, name, email, gender, avatar, verifyTokenEmail } = newUser;
+
+    try {
+      const emailService = new EmailService(process.env.NODE_ENV);
+      await emailService.sendVerifyEmail(verifyTokenEmail, email, name);
+    } catch (e) {
+      //loger
+      console.log(e.message);
+    }
+
     return res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
       data: {
-        id: newUser.id,
-        email: newUser.email,
-        gender: newUser.gender,
-        avatar: newUser.avatar,
+        id,
+        email,
+        gender,
+        avatar,
       },
     });
   } catch (e) {
@@ -47,7 +58,7 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await Users.findByEmail(email);
   const isValidPassword = await user?.validPassword(password);
-  if (!user || !isValidPassword) {
+  if (!user || !isValidPassword || !user.verify) {
     return res.status(HttpCode.UNAUTHORIZED).json({
       status: 'error',
       code: HttpCode.UNAUTHORIZED,
@@ -120,9 +131,55 @@ const saveAvatarUserToCloud = async req => {
   return { idCloudAvatar, avatarUrl };
 };
 
+const verify = async (req, res, next) => {
+  try {
+    const user = await Users.findByVerifyTokenEmail(req.params.token);
+    if (user) {
+      await Users.updateVerifyToken(user.is, true, null);
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        data: { message: 'Verification successFull' },
+      });
+    }
+    return res.status(HttpCode.BAD_REQUEST).json({
+      status: 'error',
+      code: HttpCode.BAD_REQUEST,
+      message: 'Your verification token is not valid. Contact to administrator',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const repeatEmailVerify = async (req, res, next) => {
+  try {
+    const user = await Users.findByEmail(req.body.email);
+    if (user) {
+      const { name, verifyTokenEmail, email } = user;
+      const emailService = new EmailService(process.env.NODE_ENV);
+      await emailService.sendVerifyEmail(verifyTokenEmail, email, name);
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        data: { message: 'Verification email resubmitted' },
+      });
+    }
+    return res.status(HttpCode.NOF_FOUND).json({
+      status: 'error',
+      code: HttpCode.NOF_FOUND,
+      message: 'User not found',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   reg,
   login,
   logout,
   updateAvatar,
+  verify,
+  repeatEmailVerify,
 };

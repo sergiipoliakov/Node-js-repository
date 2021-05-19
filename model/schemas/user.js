@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const gravatar = require('gravatar');
-const { Gender } = require('../../helper/constants');
 const bcrypt = require('bcryptjs');
+const { nanoid } = require('nanoid');
+const { Gender } = require('../../helper/constants');
+
 const SALT_FACTOR = 6;
+
 const userSchema = new Schema(
   {
     name: {
@@ -46,6 +49,15 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    verify: {
+      type: String,
+      default: false,
+    },
+    veryfyTokenEmail: {
+      type: String,
+      required: true,
+      default: nanoid(),
+    },
   },
   {
     versionKey: false,
@@ -62,7 +74,6 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.methods.validPassword = async function (password) {
-  console.log('🚀 ~ file: user.js ~ line 54 ~ password', password);
   return await bcrypt.compare(String(password), this.password);
 };
 
