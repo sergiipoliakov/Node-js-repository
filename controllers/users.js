@@ -8,7 +8,6 @@ require('dotenv').config();
 const Users = require('../model/users');
 const EmailService = require('../services/email');
 const { HttpCode } = require('../helper/constants');
-const User = require('../model/schemas/user');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 cloudinary.config({
